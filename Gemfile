@@ -6,6 +6,9 @@ ruby "3.2.2"
 # Rubocop
 gem 'rubocop', '>= 1.0', '< 2.0'
 
+# Devise
+gem "devise", "~> 4.9"
+
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
 gem "rails", "~> 7.0.7"
 
@@ -42,10 +45,16 @@ gem "rack-cors"
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri mingw x64_mingw ]
+
+  gem 'rails-controller-testing'
+  gem 'rspec-rails'
+
+  gem 'capybara'
+  gem 'selenium-webdriver'
+  gem 'webdrivers'
 end
 
 group :development do
   # Speed up commands on slow machines / big apps [https://github.com/rails/spring]
   # gem "spring"
 end
-
