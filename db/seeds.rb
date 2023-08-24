@@ -7,10 +7,10 @@
 #   Character.create(name: "Luke", movie: movies.first)
 
 User.destroy_all
-Room.destroy_all
 Branch.destroy_all
-Reservation.destroy_all
 ReservationRoom.destroy_all
+Reservation.destroy_all
+Room.destroy_all
 
 @user_one = User.create(name: "User", email: "user@example.com", password: "123456")
 
@@ -27,3 +27,8 @@ ReservationRoom.destroy_all
 
 @reservation.reservation_rooms.create(room: @room_one)
 @reservation.reservation_rooms.create(room: @room_two)
+
+@room_one.reserved = true
+@room_one.save
+@room_two.reserved = true
+@room_two.save

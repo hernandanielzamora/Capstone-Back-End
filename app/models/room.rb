@@ -1,6 +1,6 @@
 class Room < ApplicationRecord
   belongs_to :branch
-  has_one :reservation_room
+  has_one :reservation_room, dependent: :destroy
   has_one :reservation, through: :reservation_room
 
   validates :name, presence: true
