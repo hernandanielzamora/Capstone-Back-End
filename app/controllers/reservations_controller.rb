@@ -2,10 +2,17 @@ class ReservationsController < ApplicationController
   before_action :set_user
   before_action :set_reservation, only: [:show, :update, :destroy]
 
+  def index
+    @reservations = @user.reservations
+    render json: @reservations
+  end  
+
   def create
     @reservation = Reservation.new(reservation_params)
+    @rooms = Room.find(params[:room_ids])
 
     if @reservation.save
+      @rooms.each { |room| room.update(reserved: true) }
       render json: @reservation, status: :created
     else
       render json: @reservation.errors, status: :unprocessable_entity
@@ -19,6 +26,14 @@ class ReservationsController < ApplicationController
   def destroy
     @reservation = Reservation.find(params[:id])
     @reservation.destroy
+    @rooms = @reservation.room_ids
+    
+    if @reservation.destroy
+      @rooms.each { |room| room.update(reserved: false) }
+      head :no_content
+    else
+      render json: @reservation.errors, status: :unprocessable_entity
+    end
   end  
 
   private
