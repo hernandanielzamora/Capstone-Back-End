@@ -1,11 +1,11 @@
 class ReservationsController < ApplicationController
   before_action :set_user
-  before_action :set_reservation, only: [:show, :update, :destroy]
+  before_action :set_reservation, only: %i[show update destroy]
 
   def index
     @reservations = @user.reservations
     render json: @reservations
-  end  
+  end
 
   def create
     @reservation = Reservation.new(reservation_params)
@@ -27,14 +27,14 @@ class ReservationsController < ApplicationController
     @reservation = Reservation.find(params[:id])
     @reservation.destroy
     @rooms = @reservation.reservation_rooms.room_ids
-    
+
     if @reservation.destroy
       @rooms.each { |room| room.update(reserved: false) }
       head :no_content
     else
       render json: @reservation.errors, status: :unprocessable_entity
     end
-  end  
+  end
 
   private
 
