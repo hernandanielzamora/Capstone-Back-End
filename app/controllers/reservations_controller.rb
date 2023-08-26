@@ -9,7 +9,7 @@ class ReservationsController < ApplicationController
 
   def create
     @reservation = Reservation.new(reservation_params)
-    @rooms = Room.find(params[:room_ids])
+    @rooms = @reservation.reservation_rooms.find(params[:room_ids])
 
     if @reservation.save
       @rooms.each { |room| room.update(reserved: true) }
@@ -26,7 +26,7 @@ class ReservationsController < ApplicationController
   def destroy
     @reservation = Reservation.find(params[:id])
     @reservation.destroy
-    @rooms = @reservation.room_ids
+    @rooms = @reservation.reservation_rooms.room_ids
     
     if @reservation.destroy
       @rooms.each { |room| room.update(reserved: false) }
