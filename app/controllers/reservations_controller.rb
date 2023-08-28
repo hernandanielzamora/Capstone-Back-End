@@ -1,18 +1,17 @@
 class ReservationsController < ApplicationController
   before_action :set_user
-  before_action :set_reservation, only: %i[show update destroy]
+  before_action :set_reservation, only: %i[show destroy]
 
   def index
-    @reservations = @user.reservations
-    render json: @reservations
+    @reservations = @user.reservations.includes(:rooms)
+    render json: @reservations, include: { rooms: {} }
   end
 
   def create
     @reservation = Reservation.new(reservation_params)
-    @rooms = @reservation.reservation_rooms.find(params[:room_ids])
 
     if @reservation.save
-      @rooms.each { |room| room.update(reserved: true) }
+      @reservation.rooms.each { |room| room.update(reserved: true) }
       render json: @reservation, status: :created
     else
       render json: @reservation.errors, status: :unprocessable_entity
@@ -20,16 +19,14 @@ class ReservationsController < ApplicationController
   end
 
   def show
-    render json: @reservation
+    render json: @reservation, include: { rooms: {} }
   end
 
   def destroy
-    @reservation = Reservation.find(params[:id])
+    @reservation.rooms.each { |room| room.update(reserved: false) }
     @reservation.destroy
-    @rooms = @reservation.reservation_rooms.room_ids
 
     if @reservation.destroy
-      @rooms.each { |room| room.update(reserved: false) }
       head :no_content
     else
       render json: @reservation.errors, status: :unprocessable_entity
@@ -47,6 +44,6 @@ class ReservationsController < ApplicationController
   end
 
   def reservation_params
-    params.require(:reservation).permit(:reservation_date, :city, :total_cost, :user_id)
+    params.require(:reservation).permit(:reservation_date, :city, :total_cost, :user_id, room_ids: [])
   end
 end
