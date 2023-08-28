@@ -1,0 +1,193 @@
+---
+openapi: 3.0.1
+info:
+  title: API V1
+  version: v1
+paths:
+  "/users/{user_id}/reservations":
+    parameters:
+    - name: user_id
+      in: path
+      description: user_id
+      required: true
+      schema:
+        type: string
+    get:
+      summary: Retrieve all reservations
+      tags:
+      - Reservations
+      responses:
+        '200':
+          description: Successful, reservations found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      example: 1
+                    reservation_date:
+                      type: date
+                      example: '2023-08-23'
+                    city:
+                      type: string
+                      example: New York
+                    total_cost:
+                      type: integer
+                      example: 100
+                    user_id:
+                      type: integer
+                      example: 1
+                    created_at:
+                      type: date
+                      example: '2023-08-20'
+                    updated_at:
+                      type: date
+                      example: '2023-08-20'
+                    rooms:
+                      type: array
+                      items:
+                        type: object
+                        example:
+                          id: 1
+                          name: Room 1
+                          guest: 2
+                          beds: 1
+                          description: Room 1 description
+                          photo: room.jpg
+                          cost: 100
+                          reserved: true
+                          branch_id: 1
+                  required:
+                  - id
+                  - reservation_date
+                  - city
+                  - total_cost
+                  - user_id
+                  - created_at
+                  - updated_at
+                  - rooms
+    post:
+      summary: Create a reservation
+      tags:
+      - Reservations
+      parameters: []
+      responses:
+        '201':
+          description: Reservation was created successfully
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reservation:
+                  type: object
+                  properties:
+                    reservation_date:
+                      type: date
+                      example: '2023-08-23'
+                    city:
+                      type: string
+                      example: New York
+                    total_cost:
+                      type: integer
+                      example: 998
+                    user_id:
+                      type: integer
+                      example: 1
+                    room_ids:
+                      type: array
+                      example:
+                      - 3
+              required:
+              - reservation_date
+              - city
+              - total_cost
+              - user_id
+              - room_ids
+  "/users/{user_id}/reservations/{id}":
+    parameters:
+    - name: user_id
+      in: path
+      description: user_id
+      required: true
+      schema:
+        type: string
+    - name: id
+      in: path
+      description: reservation id
+      required: true
+      schema:
+        type: string
+    get:
+      summary: Show reservation details
+      tags:
+      - Reservations
+      responses:
+        '200':
+          description: Success, room was found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 1
+                  reservation_date:
+                    type: date
+                    example: '2023-08-23'
+                  city:
+                    type: string
+                    example: New York
+                  total_cost:
+                    type: integer
+                    example: 998
+                  user_id:
+                    type: integer
+                    example: 1
+                  created_at:
+                    type: date
+                    example: '2023-08-20'
+                  updated_at:
+                    type: date
+                    example: '2023-08-20'
+                  rooms:
+                    type: array
+                    items:
+                      type: object
+                      example:
+                        id: 1
+                        name: Room 1
+                        guest: 2
+                        beds: 1
+                        description: Room 1 description
+                        photo: room.jpg
+                        cost: 100
+                        reserved: true
+                        branch_id: 1
+                required:
+                - id
+                - reservation_date
+                - city
+                - total_cost
+                - user_id
+                - created_at
+                - updated_at
+                - rooms
+    delete:
+      summary: Delete reservation
+      tags:
+      - Reservations
+      responses:
+        '204':
+          description: Success, no content
+servers:
+- url: "{defaultHost}"
+  variables:
+    defaultHost:
+      default: http://127.0.0.1:3000
