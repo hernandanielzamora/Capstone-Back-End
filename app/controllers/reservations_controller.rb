@@ -9,7 +9,6 @@ class ReservationsController < ApplicationController
 
   def create
     @reservation = Reservation.new(reservation_params)
-
     if @reservation.save
       @reservation.rooms.each { |room| room.update(reserved: true) }
       render json: @reservation, status: :created
