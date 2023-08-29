@@ -6,4 +6,5 @@ Rails.application.routes.draw do
     resources :reservations, only: [:index, :show, :create, :destroy]
   end
   resources :branches, only: [:index, :show]
+  resources :rooms, only: [:index, :show, :create, :destroy]
 end
