@@ -4,6 +4,76 @@ info:
   title: API V1
   version: v1
 paths:
+  "/branches":
+    get:
+      summary: Retrieve all branches
+      tags:
+      - Branches
+      responses:
+        '200':
+          description: Success, branches found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      example: 1
+                    city:
+                      type: string
+                      example: New York
+                  required:
+                  - id
+                  - city
+  "/branches/{id}":
+    parameters:
+    - name: id
+      in: path
+      description: id
+      required: true
+      schema:
+        type: string
+    get:
+      summary: Retrieve a branch
+      tags:
+      - Branches
+      responses:
+        '200':
+          description: Success, branch was found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 1
+                  city:
+                    type: string
+                    example: New York
+                required:
+                - id
+                - city
+        '404':
+          description: Branch was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 404
+                  error:
+                    type: string
+                    example: Not Found
+                  exception:
+                    type: string
+                    example: "#<ActiveRecord::RecordNotFound: Couldn't find Branch
+                      with 'id'=NaN>"
   "/users/{user_id}/reservations":
     parameters:
     - name: user_id
