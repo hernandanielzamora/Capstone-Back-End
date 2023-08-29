@@ -2,6 +2,8 @@ require 'swagger_helper'
 
 RSpec.describe 'rooms', type: :request do
   path '/rooms' do
+    parameter name: :reserved, in: :query, type: :boolean, description: 'reserved'
+    parameter name: :branch_id, in: :query, type: :integer, description: 'branch_id'
     get 'Retrieve all rooms' do
       tags 'Rooms'
       produces 'application/json'

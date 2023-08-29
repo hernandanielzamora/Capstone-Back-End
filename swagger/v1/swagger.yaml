@@ -257,6 +257,17 @@ paths:
         '204':
           description: Success, no content
   "/rooms":
+    parameters:
+    - name: reserved
+      in: query
+      description: reserved
+      schema:
+        type: boolean
+    - name: branch_id
+      in: query
+      description: branch_id
+      schema:
+        type: integer
     get:
       summary: Retrieve all rooms
       tags:
