@@ -2,7 +2,7 @@ class RoomsController < ApplicationController
   def index
     is_reserved = params[:reserved]
     branch_id = params[:branch_id]
-    
+
     room_query = Room.order(:id).includes(:branch).all
     room_query = room_query.where(reserved: (is_reserved == 'true')) if is_reserved.present?
     room_query = room_query.where(branch_id:) if branch_id.present?
