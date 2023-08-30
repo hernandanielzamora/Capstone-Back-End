@@ -1,57 +1,31 @@
-require 'swagger_helper'
+require_relative '../rails_helper'
 
-RSpec.describe 'branches', type: :request do
-  path '/branches' do
-    get 'Retrieve all branches' do
-      tags 'Branches'
-      produces 'application/json'
+RSpec.describe BranchesController, type: :request do
+  branch_three = Branch.create(city: "New York")
+  branch_three.save!
+  branch_two = Branch.create(city: "Miami")
+  branch_two.save!
 
-      response '200', 'Success, branches found' do
-        schema type: :array,
-               items: {
-                 type: :object,
-                 properties: {
-                   id: { type: :integer, example: 1 },
-                   city: { type: :string, example: 'New York' }
-                 },
-                 required: %w[id city]
-               }
-
-        run_test!
-      end
+  describe 'GET /branches' do
+    it 'returns a list of branches' do
+      get '/branches'
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include_json(
+        [
+          { city: "New York" },
+          { city: "Miami" }
+        ]
+      )
     end
   end
 
-  path '/branches/{id}' do
-    parameter name: :id, in: :path, type: :string, description: 'id'
-
-    get 'Retrieve a branch' do
-      tags 'Branches'
-      produces 'application/json'
-
-      response '200', 'Success, branch was found' do
-        schema type: :object,
-               properties: {
-                 id: { type: :integer, example: 1 },
-                 city: { type: :string, example: 'New York' }
-               },
-               required: %w[id city]
-
-        let(:id) { '1' }
-        run_test!
-      end
-
-      response '404', 'Branch was not found' do
-        schema type: :object,
-               properties: {
-                 status: { type: :integer, example: 404 },
-                 error: { type: :string, example: 'Not Found' },
-                 exception: { type: :string,
-                              example: "#<ActiveRecord::RecordNotFound: Couldn't find Branch with 'id'=NaN>" }
-               }
-        let(:id) { 'invalid' }
-        run_test!
-      end
+  describe 'GET /branches/:id' do
+    it 'returns a single branch by ID' do
+      get "/branches/#{branch_three.id}"
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include_json(
+        city: 'New York'
+      )
     end
-  end
+  end 
 end
