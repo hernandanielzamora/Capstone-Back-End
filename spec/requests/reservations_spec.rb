@@ -1,108 +1,74 @@
-require 'swagger_helper'
+require_relative '../rails_helper'
+require 'rspec/json_expectations'
 
-RSpec.describe 'reservations', type: :request do
-  path '/users/{user_id}/reservations' do
-    parameter name: 'user_id', in: :path, type: :string, description: 'user_id'
-    get 'Retrieve all reservations' do
-      tags 'Reservations'
-      produces 'application/json'
-      response '200', 'Successful, reservations found' do
-        schema type: :array,
-               items: {
-                 type: :object,
-                 properties: {
-                   id: { type: :integer, example: 1 }, reservation_date: { type: :date, example: '2023-08-23' },
-                   city: { type: :string, example: 'New York' }, total_cost: { type: :integer, example: 100 },
-                   user_id: { type: :integer, example: 1 }, created_at: { type: :date, example: '2023-08-20' },
-                   updated_at: { type: :date, example: '2023-08-20' },
-                   rooms: {
-                     type: :array,
-                     items: {
-                       type: :object, example: {
-                         id: 1, name: 'Room 1', guest: 2, beds: 1, description: 'Room 1 description',
-                         photo: 'room.jpg', cost: 100, reserved: true, branch_id: 1
-                       }
-                     }
-                   }
-                 },
-                 required: %w[id reservation_date city total_cost user_id created_at updated_at rooms]
-               }
-        let(:user_id) { '1' }
-        run_test!
-      end
+RSpec.describe ReservationsController, type: :request do
+  user = User.new(name: "Fredo", email: "fred#{rand(1...100)}@example.com", password: "123456")
+  user.save!
+  branch_one = Branch.create(city: "New York")
+  branch_one.save!
+  room_one = Room.create(branch: branch_one, name: "Room One", guest: 2, beds: 1, description: "This is a room.", photo: "https://www.ikea.com/mx/en/images/products/malm-bedroom-furniture-set-of-4-black-brown__1102127_pe866548_s5.jpg", cost: 100, reserved: false)
+  room_one.save!
+  reservation = Reservation.create(user: user, reservation_date: "2023-08-23", city: "new york", total_cost: 200)
+  reservation.save!
+
+  describe 'GET /users/:user_id/reservations' do
+    it 'returns a list of reservations for a user' do
+     reservation.reservation_rooms.create(room: room_one)
+     get "/users/#{user.id}/reservations"
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include_json(
+        [
+          { id: reservation.id, user_id: user.id},
+        ]
+      )
     end
   end
 
-  path '/users/{user_id}/reservations' do
-    parameter name: 'user_id', in: :path, type: :string, description: 'user_id'
-    post 'Create a reservation' do
-      tags 'Reservations'
-      consumes 'application/json'
-      parameter name: :reservation, in: :body, schema: {
-        type: :object,
-        properties: {
-          reservation: {
-            type: :object,
-            properties: {
-              reservation_date: { type: :date, example: '2023-08-23' },
-              city: { type: :string, example: 'New York' },
-              total_cost: { type: :integer, example: 998 },
-              user_id: { type: :integer, example: 1 },
-              room_ids: { type: :array, example: [3] }
-            }
-          }
-        },
-        required: %w[reservation_date city total_cost user_id room_ids]
+  describe 'POST /users/:user_id/reservations' do
+    it 'creates a new reservation' do
+      reservation_params = {
+        reservation_date: Date.today,
+        city: 'Miami',
+        total_cost: 200,
+        user_id: user.id,
+        room_ids: [room_one.id]
       }
-      response '201', 'Reservation was created successfully' do
-        let(:user_id) { '1' }
-        run_test!
-      end
+
+      post "/users/#{user.id}/reservations", params: { reservation: reservation_params }
+
+      expect(response).to have_http_status(:created)
     end
   end
 
-  path '/users/{user_id}/reservations/{id}' do
-    parameter name: 'user_id', in: :path, type: :string, description: 'user_id'
-    parameter name: 'id', in: :path, type: :string, description: 'reservation_id'
+  it 'returns unprocessable_entity status when reservation creation fails' do
+    invalid_params = { reservation_date: nil, user_id: user.id }
+    post "/users/#{user.id}/reservations", params: { reservation: invalid_params }
+    expect(response).to have_http_status(:unprocessable_entity)
+  end
 
-    get 'Show reservation details' do
-      tags 'Reservations'
-      produces 'application/json'
-      response '200', 'Success, room was found' do
-        schema type: :object,
-               properties: {
-                 id: { type: :integer, example: 1 }, reservation_date: { type: :date, example: '2023-08-23' },
-                 city: { type: :string, example: 'New York' }, total_cost: { type: :integer, example: 998 },
-                 user_id: { type: :integer, example: 1 }, created_at: { type: :date, example: '2023-08-20' },
-                 updated_at: { type: :date, example: '2023-08-20' },
-                 rooms: {
-                   type: :array,
-                   items: {
-                     type: :object, example: {
-                       id: 1, name: 'Room 1', guest: 2, beds: 1, description: 'Room 1 description',
-                       photo: 'room.jpg', cost: 100, reserved: true, branch_id: 1
-                     }
-                   }
-                 }
-               },
-               required: %w[id reservation_date city total_cost user_id created_at updated_at rooms]
-        let(:user_id) { '1' }
-        let(:id) { '1' }
-        run_test!
-      end
+  describe 'GET /users/:user_id/reservations/:id' do
+    it 'returns a single reservation for a user' do
+      get "/users/#{user.id}/reservations/#{reservation.id}"
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include_json(
+        id: reservation.id,
+        user_id: user.id
+      )
     end
   end
 
-  path '/users/{user_id}/reservations/{id}' do
-    parameter name: 'user_id', in: :path, type: :string, description: 'user_id'
-    parameter name: 'id', in: :path, type: :string, description: 'reservation id'
+  describe 'DELETE /users/:user_id/reservations/:id' do
+    it 'deletes a reservation and updates room status' do
+      delete "/users/#{user.id}/reservations/#{reservation.id}"
 
-    delete 'Delete reservation' do
-      tags 'Reservations'
-      response '204', 'Success, no content' do
-        let(:user_id) { '1' }
-        run_test!
-      end
+      expect(response).to have_http_status(:no_content)
+      expect(Room.find(room_one.id).reserved).to be(false)
     end
+  end
+
+  it 'returns unprocessable_entity status when deletion fails' do
+    allow_any_instance_of(Reservation).to receive(:destroy).and_return(false)
+    delete "/users/#{user.id}/reservations/#{reservation.id}"
+    expect(response).to have_http_status(:unprocessable_entity)
   end
 end
