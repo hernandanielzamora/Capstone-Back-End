@@ -7,7 +7,9 @@ ruby '3.2.2'
 gem 'rubocop', '>= 1.0', '< 2.0'
 
 # Devise
-gem 'devise', '~> 4.9'
+gem 'devise'
+gem 'devise-jwt'
+gem 'jsonapi-serializer'
 
 # rswag
 gem 'rswag'
