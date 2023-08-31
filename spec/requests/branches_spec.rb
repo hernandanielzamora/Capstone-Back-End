@@ -8,7 +8,7 @@ RSpec.describe BranchesController, type: :request do
 
   describe 'GET /branches' do
     it 'returns a list of branches' do
-      get "/branches"
+      get '/branches'
       expect(response).to have_http_status(:ok)
       expect(response.body).to include_json(
         [
@@ -26,5 +26,5 @@ RSpec.describe BranchesController, type: :request do
         city: 'New York'
       )
     end
-  end 
+  end
 end

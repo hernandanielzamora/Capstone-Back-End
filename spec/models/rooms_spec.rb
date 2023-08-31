@@ -1,13 +1,14 @@
 require_relative '../rails_helper'
 
 RSpec.describe Room, type: :model do
-  user = User.create(name: 'User', email: "fredo#{rand(1...100)}@example.com", password: '123456')
-  user.save!
+  user_one = User.create(name: 'user_one', email: "fredo#{rand(1...100)}@example.com", password: '123456')
+  user_one.save!
   branch_one = Branch.create(city: 'New York')
-  room_one = Room.create(branch: branch_one, name: 'Room One', guest: 2, beds: 1, description: 'This is a room.', 
-    photo: 'https://www.ikea.com/mx/en/images/products/malm-bedroom-furniture-set-of-4-black-brown__1102127_pe866548_s5.jpg', 
-    cost: 100, reserved: false)
-  reservation = Reservation.create(user: user, reservation_date: '2023-08-23', city: room_one.branch.city, total_cost: 1000)
+  room_one = Room.create(branch: branch_one, name: 'Room One', guest: 2, beds: 1, description: 'This is a room.',
+                         photo: 'https://www.ikea.com/mx/en/images/products/malm-bedroom-furniture-set-of-4-black-brown__1102127_pe866548_s5.jpg',
+                         cost: 100, reserved: false)
+  reservation = Reservation.create(user: user_one, reservation_date: '2023-08-23', city: room_one.branch.city,
+                                   total_cost: 1000)
   reservation.save!
   reservation.reservation_rooms.create(room: @room_one)
 
