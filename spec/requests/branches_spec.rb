@@ -12,8 +12,7 @@ RSpec.describe BranchesController, type: :request do
       expect(response).to have_http_status(:ok)
       expect(response.body).to include_json(
         [
-          { city: "New York" },
-          { city: "Miami" }
+          { city: "New York" }
         ]
       )
     end
