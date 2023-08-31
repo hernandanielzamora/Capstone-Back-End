@@ -1,15 +1,15 @@
 require_relative '../rails_helper'
 
 RSpec.describe RoomsController, type: :request do
-  user = User.new(name: "Vasquez", email: "vasquez#{rand(1...100)}@example.com", password: "123456")
+  user = User.new(name: 'Vasquez', email: "vasquez#{rand(1...100)}@example.com", password: '123456')
   user.save!
-  branch_one = Branch.create(city: "New York")
+  branch_one = Branch.create(city: 'New York')
   branch_one.save!
-  room_one = Room.create(branch: branch_one, name: "Room One", guest: 2, beds: 1, description: "This is a room.", photo: "https://www.ikea.com/mx/en/images/products/malm-bedroom-furniture-set-of-4-black-brown__1102127_pe866548_s5.jpg", cost: 100, reserved: false)
+  room_one = Room.create(branch: branch_one, name: 'Room One', guest: 2, beds: 1, description: 'This is a room.', photo: 'https://www.ikea.com/mx/en/images/products/malm-bedroom-furniture-set-of-4-black-brown__1102127_pe866548_s5.jpg', cost: 100, reserved: false)
   room_one.save!
-  room_two = Room.create(branch: branch_one, name: "Room Two", guest: 3, beds: 1, description: "This is a room.", photo: "https://www.ikea.com/mx/en/images/products/malm-bedroom-furniture-set-of-4-black-brown__1102127_pe866548_s5.jpg", cost: 100, reserved: true)
+  room_two = Room.create(branch: branch_one, name: 'Room Two', guest: 3, beds: 1, description: 'This is a room.', photo: 'https://www.ikea.com/mx/en/images/products/malm-bedroom-furniture-set-of-4-black-brown__1102127_pe866548_s5.jpg', cost: 100, reserved: true)
   room_two.save!
-  reservation = Reservation.create(user: user, reservation_date: "2023-08-23", city: "new york", total_cost: 200)
+  reservation = Reservation.create(user: user, reservation_date: '2023-08-23', city: 'new york', total_cost: 200)
   reservation.save!
 
   describe 'GET #index' do
@@ -19,12 +19,12 @@ RSpec.describe RoomsController, type: :request do
       expect(response.body).to include_json(
         [ 
           {
-            name: "Room One",
+            name: 'Room One',
             guest: 2,
             beds: 1,
-            description: "This is a room.",
-            photo: "https://www.ikea.com/mx/en/images/products/malm-bedroom-furniture-set-of-4-black-brown__1102127_pe866548_s5.jpg",
-            cost: "100.0",
+            description: 'This is a room.',
+            photo: 'https://www.ikea.com/mx/en/images/products/malm-bedroom-furniture-set-of-4-black-brown__1102127_pe866548_s5.jpg',
+            cost: '100.0',
             reserved: false,
           }
         ]
@@ -37,12 +37,12 @@ RSpec.describe RoomsController, type: :request do
       expect(response.body).to include_json(
         [ 
           {
-            name: "Room Two",
+            name: 'Room Two',
             guest: 3,
             beds: 1,
-            description: "This is a room.",
-            photo: "https://www.ikea.com/mx/en/images/products/malm-bedroom-furniture-set-of-4-black-brown__1102127_pe866548_s5.jpg",
-            cost: "100.0",
+            description: 'This is a room.',
+            photo: 'https://www.ikea.com/mx/en/images/products/malm-bedroom-furniture-set-of-4-black-brown__1102127_pe866548_s5.jpg',
+            cost: '100.0',
             reserved: true,
           }
         ]
@@ -63,12 +63,12 @@ RSpec.describe RoomsController, type: :request do
   describe 'POST /create' do
     it 'creates a new room' do
        room_params = {
-        name: "Room Three",
+        name: 'Room Three',
         guest: 4,
         beds: 4,
-        description: "This is a room.",
-        photo: "https://www.ikea.com/mx/en/images/products/malm-bedroom-furniture-set-of-4-black-brown__1102127_pe866548_s5.jpg",
-        cost: "100.0",
+        description: 'This is a room.',
+        photo: 'https://www.ikea.com/mx/en/images/products/malm-bedroom-furniture-set-of-4-black-brown__1102127_pe866548_s5.jpg',
+        cost: '100.0',
         reserved: true,
         branch_id: branch_one.id
       }
@@ -78,15 +78,15 @@ RSpec.describe RoomsController, type: :request do
 
     it 'returns unprocessable entity status on validation error' do
        room_params = {
-        name: "Room Three",
+        name: 'Room Three',
         guest: 4,
         beds: 4,
-        description: "This is a room.",
-        photo: "https://www.ikea.com/mx/en/images/products/malm-bedroom-furniture-set-of-4-black-brown__1102127_pe866548_s5.jpg",
-        cost: "100.0",
+        description: 'This is a room.',
+        photo: 'https://www.ikea.com/mx/en/images/products/malm-bedroom-furniture-set-of-4-black-brown__1102127_pe866548_s5.jpg',
+        cost: '100.0',
         reserved: true,
       }
-      post "/rooms", params: { room: room_params }
+      post '/rooms', params: { room: room_params }
       expect(response).to have_http_status(:unprocessable_entity)
     end
   end

@@ -2,13 +2,13 @@ require_relative '../rails_helper'
 require 'rspec/json_expectations'
 
 RSpec.describe ReservationsController, type: :request do
-  user = User.new(name: "Fredo", email: "fred#{rand(1...100)}@example.com", password: "123456")
+  user = User.new(name: 'Fredo', email: "fred#{rand(1...100)}@example.com", password: '123456')
   user.save!
-  branch_one = Branch.create(city: "New York")
+  branch_one = Branch.create(city: 'New York')
   branch_one.save!
-  room_one = Room.create(branch: branch_one, name: "Room One", guest: 2, beds: 1, description: "This is a room.", photo: "https://www.ikea.com/mx/en/images/products/malm-bedroom-furniture-set-of-4-black-brown__1102127_pe866548_s5.jpg", cost: 100, reserved: false)
+  room_one = Room.create(branch: branch_one, name: 'Room One', guest: 2, beds: 1, description: 'This is a room.', photo: 'https://www.ikea.com/mx/en/images/products/malm-bedroom-furniture-set-of-4-black-brown__1102127_pe866548_s5.jpg', cost: 100, reserved: false)
   room_one.save!
-  reservation = Reservation.create(user: user, reservation_date: "2023-08-23", city: "new york", total_cost: 200)
+  reservation = Reservation.create(user: user, reservation_date: '2023-08-23', city: 'new york', total_cost: 200)
   reservation.save!
 
   describe 'GET /users/:user_id/reservations' do
@@ -33,9 +33,7 @@ RSpec.describe ReservationsController, type: :request do
         user_id: user.id,
         room_ids: [room_one.id]
       }
-
       post "/users/#{user.id}/reservations", params: { reservation: reservation_params }
-
       expect(response).to have_http_status(:created)
     end
   end

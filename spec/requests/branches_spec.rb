@@ -1,18 +1,18 @@
 require_relative '../rails_helper'
 
 RSpec.describe BranchesController, type: :request do
-  branch_three = Branch.create(city: "New York")
+  branch_three = Branch.create(city: 'New York')
   branch_three.save!
-  branch_two = Branch.create(city: "Miami")
+  branch_two = Branch.create(city: 'Miami')
   branch_two.save!
 
   describe 'GET /branches' do
     it 'returns a list of branches' do
-      get '/branches'
+      get "/branches"
       expect(response).to have_http_status(:ok)
       expect(response.body).to include_json(
         [
-          { city: "New York" }
+          { city: 'New York' }
         ]
       )
     end
