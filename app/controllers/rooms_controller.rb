@@ -5,7 +5,7 @@ class RoomsController < ApplicationController
 
     room_query = Room.order(:id).includes(:branch).all
     room_query = room_query.where(reserved: (is_reserved == 'true')) if is_reserved.present?
-    room_query = room_query.where(branch_id:) if branch_id.present?
+    room_query = room_query.where(:branch_id) if branch_id.present?
 
     render json: room_query, include: { branch: {} }, except: [:branch_id]
   end
