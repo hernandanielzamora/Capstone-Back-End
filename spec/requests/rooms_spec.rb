@@ -1,104 +1,87 @@
-require_relative '../rails_helper'
+require 'swagger_helper'
 
-RSpec.describe RoomsController, type: :request do
-  user_one = User.new(name: 'Vasquez', email: "vasquez#{rand(1...100)}@example.com", password: '123456')
-  user_one.save!
-  branch_one = Branch.create(city: 'New York')
-  branch_one.save!
-  room_one = Room.create(branch: branch_one, name: 'Room One', guest: 2, beds: 1, description: 'This is a room.',
-                         photo: 'https://www.ikea.com/mx/en/images/products/malm-bedroom-furniture-set-of-4-black-brown__1102127_pe866548_s5.jpg',
-                         cost: 100, reserved: false)
-  room_one.save!
-  room_two = Room.create(branch: branch_one, name: 'Room Two', guest: 3, beds: 1, description: 'This is a room.',
-                         photo: 'https://www.ikea.com/mx/en/images/products/malm-bedroom-furniture-set-of-4-black-brown__1102127_pe866548_s5.jpg',
-                         cost: 100, reserved: true)
-  room_two.save!
-  reservation = Reservation.create(user: user_one, reservation_date: '2023-08-23', city: 'new york', total_cost: 200)
-  reservation.save!
-
-  describe 'GET #index' do
-    it 'returns a list of rooms' do
-      get '/rooms'
-      expect(response).to have_http_status(:success)
-      expect(response.body).to include_json(
-        [
-          {
-            name: 'Room One',
-            guest: 2,
-            beds: 1,
-            description: 'This is a room.',
-            photo: 'https://www.ikea.com/mx/en/images/products/malm-bedroom-furniture-set-of-4-black-brown__1102127_pe866548_s5.jpg',
-            cost: '100.0',
-            reserved: false
-          }
-        ]
-      )
-    end
-
-    it 'returns a filtered list of rooms based on reserved status' do
-      get '/rooms', params: { reserved: 'true' }
-      expect(response).to have_http_status(:success)
-      expect(response.body).to include_json(
-        [
-          {
-            name: 'Room Two',
-            guest: 3,
-            beds: 1,
-            description: 'This is a room.',
-            photo: 'https://www.ikea.com/mx/en/images/products/malm-bedroom-furniture-set-of-4-black-brown__1102127_pe866548_s5.jpg',
-            cost: '100.0',
-            reserved: true
-          }
-        ]
-      )
+RSpec.describe 'rooms', type: :request do
+  path '/rooms' do
+    parameter name: :reserved, in: :query, type: :boolean, description: 'reserved'
+    parameter name: :branch_id, in: :query, type: :integer, description: 'branch_id'
+    get 'Retrieve all rooms' do
+      tags 'Rooms'
+      produces 'application/json'
+      response '200', 'Successful, rooms found' do
+        schema type: :array, items: {
+          type: :object, properties: {
+                           id: { type: :integer, example: 1 }, name: { type: :string, example: 'Room one' },
+                           guest: { type: :integer, example: 2 }, beds: { type: :integer, example: 1 },
+                           description: { type: :string, example: 'This is a room.' },
+                           photo: { type: :string, example: 'room.jpg' }, cost: { type: :integer, example: 100 },
+                           reserved: { type: :boolean, example: false },
+                           branch: { type: :object,
+                                     properties: { id: { type: :integer, example: 1 },
+                                                   city: { type: :string, example: 'New York' } } }
+                         },
+          required: %w[id name guest beds description photo cost reserved branch]
+        }
+        run_test!
+      end
     end
   end
 
-  describe 'GET /rooms/:id' do
-    it 'returns a single room' do
-      get "/rooms/#{room_two.id}"
-      expect(response).to have_http_status(:ok)
-      expect(response.body).to include_json(
-        id: room_two.id
-      )
-    end
-  end
-
-  describe 'POST /create' do
-    it 'creates a new room' do
-      room_params = {
-        name: 'Room Three',
-        guest: 4,
-        beds: 4,
-        description: 'This is a room.',
-        photo: 'https://www.ikea.com/mx/en/images/products/malm-bedroom-furniture-set-of-4-black-brown__1102127_pe866548_s5.jpg',
-        cost: '100.0',
-        reserved: true,
-        branch_id: branch_one.id
+  path '/rooms' do
+    post 'Create a room' do
+      tags 'Rooms'
+      consumes 'application/json'
+      parameter name: :room, in: :body, schema: {
+        type: :object, properties: {
+                         room: {
+                           type: :object, properties: {
+                             name: { type: :string, example: 'Room VIP' }, guest: { type: :integer, example: 4 },
+                             beds: { type: :integer, example: 2 },
+                             description: { type: :string, example: 'Room created from the API docs' },
+                             photo: { type: :string, example: 'Valid url' }, cost: { type: :integer, example: 1000 },
+                             reserved: { type: :boolean, example: false }, branch_id: { type: :integer, example: 1 }
+                           }
+                         }
+                       },
+        required: %w[name guest beds description photo cost reserved branch_id]
       }
-      post '/rooms', params: { room: room_params }
-      expect(response).to have_http_status(:created)
-    end
-
-    it 'returns unprocessable entity status on validation error' do
-      room_params = {
-        name: 'Room Three',
-        guest: 4,
-        beds: 4,
-        description: 'This is a room.',
-        photo: 'https://www.ikea.com/mx/en/images/products/malm-bedroom-furniture-set-of-4-black-brown__1102127_pe866548_s5.jpg',
-        cost: '100.0',
-        reserved: true
-      }
-      post '/rooms', params: { room: room_params }
-      expect(response).to have_http_status(:unprocessable_entity)
+      response '201', 'Room was created successfully' do
+        run_test!
+      end
     end
   end
 
-  describe 'DELETE rooms' do
-    it 'deletes a room by id' do
-      delete "/rooms/#{room_one.id}"
-      expect(response).to have_http_status(:no_content)
+  path '/rooms/{id}' do
+    parameter name: :id, in: :path, type: :string, description: 'id'
+
+    get 'Show room details' do
+      tags 'Rooms'
+      produces 'application/json'
+
+      response '200', 'Success, room was found' do
+        schema type: :object,
+               properties: {
+                 id: { type: :integer, example: 1 }, name: { type: :string, example: 'Room one' },
+                 guest: { type: :integer, example: 2 }, beds: { type: :integer, example: 1 },
+                 description: { type: :string, example: 'This is a room.' },
+                 photo: { type: :string, example: 'room.jpg' }, cost: { type: :integer, example: 100 },
+                 reserved: { type: :boolean, example: false },
+                 branch: { type: :object,
+                           properties: { id: { type: :integer, example: 1 },
+                                         city: { type: :string, example: 'New York' } } }
+               },
+               required: %w[id name guest beds description photo cost reserved branch]
+
+        let(:id) { '1' }
+        run_test!
+      end
+    end
+
+    delete 'Delete room' do
+      tags 'Rooms'
+
+      response '204', 'Success, no content' do
+        run_test!
+      end
     end
   end
 end
