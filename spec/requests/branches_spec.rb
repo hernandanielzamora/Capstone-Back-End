@@ -5,7 +5,7 @@ RSpec.describe 'branches', type: :request do
     get 'Retrieve all branches' do
       tags 'Branches'
       produces 'application/json'
-
+      security [bearer_auth: []]
       response '200', 'Success, branches found' do
         schema type: :array,
                items: {
@@ -19,6 +19,9 @@ RSpec.describe 'branches', type: :request do
 
         run_test!
       end
+      response '401', 'Unauthorized' do
+        run_test!
+      end
     end
   end
 
@@ -28,7 +31,7 @@ RSpec.describe 'branches', type: :request do
     get 'Retrieve a branch' do
       tags 'Branches'
       produces 'application/json'
-
+      security [bearer_auth: []]
       response '200', 'Success, branch was found' do
         schema type: :object,
                properties: {
@@ -40,7 +43,9 @@ RSpec.describe 'branches', type: :request do
         let(:id) { '1' }
         run_test!
       end
-
+      response '401', 'Unauthorized' do
+        run_test!
+      end
       response '404', 'Branch was not found' do
         schema type: :object,
                properties: {

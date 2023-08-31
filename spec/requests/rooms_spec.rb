@@ -2,11 +2,12 @@ require 'swagger_helper'
 
 RSpec.describe 'rooms', type: :request do
   path '/rooms' do
-    parameter name: :reserved, in: :query, type: :boolean, description: 'reserved'
-    parameter name: :branch_id, in: :query, type: :integer, description: 'branch_id'
     get 'Retrieve all rooms' do
+      parameter name: :reserved, in: :query, type: :boolean, description: 'reserved'
+      parameter name: :branch_id, in: :query, type: :integer, description: 'branch_id'
       tags 'Rooms'
       produces 'application/json'
+      security [bearer_auth: []]
       response '200', 'Successful, rooms found' do
         schema type: :array, items: {
           type: :object, properties: {
@@ -23,6 +24,9 @@ RSpec.describe 'rooms', type: :request do
         }
         run_test!
       end
+      response '401', 'Unauthorized' do
+        run_test!
+      end
     end
   end
 
@@ -30,6 +34,7 @@ RSpec.describe 'rooms', type: :request do
     post 'Create a room' do
       tags 'Rooms'
       consumes 'application/json'
+      security [bearer_auth: []]
       parameter name: :room, in: :body, schema: {
         type: :object, properties: {
                          room: {
@@ -47,39 +52,52 @@ RSpec.describe 'rooms', type: :request do
       response '201', 'Room was created successfully' do
         run_test!
       end
+      response '401', 'Unauthorized' do
+        run_test!
+      end
+      response '422', "Room couldn't be created successfully." do
+        run_test!
+      end
     end
   end
 
   path '/rooms/{id}' do
-    parameter name: :id, in: :path, type: :string, description: 'id'
-
     get 'Show room details' do
+      parameter name: :id, in: :path, type: :string, description: 'id'
       tags 'Rooms'
       produces 'application/json'
-
+      security [bearer_auth: []]
       response '200', 'Success, room was found' do
         schema type: :object,
-               properties: {
-                 id: { type: :integer, example: 1 }, name: { type: :string, example: 'Room one' },
-                 guest: { type: :integer, example: 2 }, beds: { type: :integer, example: 1 },
-                 description: { type: :string, example: 'This is a room.' },
-                 photo: { type: :string, example: 'room.jpg' }, cost: { type: :integer, example: 100 },
-                 reserved: { type: :boolean, example: false },
-                 branch: { type: :object,
-                           properties: { id: { type: :integer, example: 1 },
-                                         city: { type: :string, example: 'New York' } } }
+               example: {
+                 id: 1, name: 'Room one', guest: 2, beds: 1, description: 'This is a room.',
+                 photo: 'room.jpg', cost: 100, reserved: false, branch: { id: 1, city: 'New York' }
                },
                required: %w[id name guest beds description photo cost reserved branch]
-
         let(:id) { '1' }
         run_test!
       end
+      response '401', 'Unauthorized' do
+        run_test!
+      end
+      response '404', 'Room was not found' do
+        run_test!
+      end
     end
+  end
 
+  path '/rooms/{id}' do
     delete 'Delete room' do
+      parameter name: :id, in: :path, type: :string, description: 'id'
       tags 'Rooms'
-
+      security [bearer_auth: []]
       response '204', 'Success, no content' do
+        run_test!
+      end
+      response '401', 'Unauthorized' do
+        run_test!
+      end
+      response '404', 'Room was not found' do
         run_test!
       end
     end
