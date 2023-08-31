@@ -1,4 +1,4 @@
-require 'rails_helper'
+require_relative "../rails_helper"
 
 RSpec.describe Branch, type: :model do
   branch = Branch.create(city: "New York")
