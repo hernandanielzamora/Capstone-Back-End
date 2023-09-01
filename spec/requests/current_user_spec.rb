@@ -15,11 +15,8 @@ RSpec.describe 'CurrentUser', type: :request do
                  role: { type: :string, example: 'user' }
                },
                required: %w[id email name role]
-        run_test!
       end
-      response '401', 'Unauthorized' do
-        run_test!
-      end
+      response '401', 'Unauthorized'
     end
   end
 end

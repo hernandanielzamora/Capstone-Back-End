@@ -19,14 +19,8 @@ RSpec.describe 'users/sessions', type: :request do
         },
         required: %w[name email password]
       }
-
-      response '200', 'Logged in sucessfully.' do
-        run_test!
-      end
-
-      response '401', 'Invalid Email or password.' do
-        run_test!
-      end
+      response '200', 'Logged in sucessfully.'
+      response '401', 'Invalid Email or password.'
     end
   end
 
@@ -35,12 +29,8 @@ RSpec.describe 'users/sessions', type: :request do
       tags 'Sessions'
       produces 'application/json'
       security [bearer_auth: []]
-      response '200', 'Logged out sucessfully.' do
-        run_test!
-      end
-      response '401', "Couldn't find an active session." do
-        run_test!
-      end
+      response '200', 'Logged out sucessfully.'
+      response '401', "Couldn't find an active session."
     end
   end
 end

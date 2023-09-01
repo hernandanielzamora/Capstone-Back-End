@@ -20,14 +20,8 @@ RSpec.describe 'users/registrations', type: :request do
         },
         required: %w[name email password]
       }
-
-      response '200', 'Signed up sucessfully' do
-        run_test!
-      end
-
-      response '422', "User couldn't be created successfully." do
-        run_test!
-      end
+      response '200', 'Signed up sucessfully'
+      response '422', "User couldn't be created successfully."
     end
   end
 end

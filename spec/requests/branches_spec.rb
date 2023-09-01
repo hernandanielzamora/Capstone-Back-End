@@ -16,12 +16,8 @@ RSpec.describe 'branches', type: :request do
                  },
                  required: %w[id city]
                }
-
-        run_test!
       end
-      response '401', 'Unauthorized' do
-        run_test!
-      end
+      response '401', 'Unauthorized'
     end
   end
 
@@ -39,13 +35,8 @@ RSpec.describe 'branches', type: :request do
                  city: { type: :string, example: 'New York' }
                },
                required: %w[id city]
-
-        let(:id) { '1' }
-        run_test!
       end
-      response '401', 'Unauthorized' do
-        run_test!
-      end
+      response '401', 'Unauthorized'
       response '404', 'Branch was not found' do
         schema type: :object,
                properties: {
@@ -54,8 +45,6 @@ RSpec.describe 'branches', type: :request do
                  exception: { type: :string,
                               example: "#<ActiveRecord::RecordNotFound: Couldn't find Branch with 'id'=NaN>" }
                }
-        let(:id) { 'invalid' }
-        run_test!
       end
     end
   end

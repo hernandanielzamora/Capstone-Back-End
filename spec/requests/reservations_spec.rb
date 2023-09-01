@@ -21,15 +21,9 @@ RSpec.describe 'reservations', type: :request do
                  }
                },
                required: %w[id reservation_date city total_cost user_id created_at updated_at rooms]
-        let(:user_id) { '1' }
-        run_test!
       end
-      response '401', 'Unauthorized' do
-        run_test!
-      end
-      response '404', 'User was not found' do
-        run_test!
-      end
+      response '401', 'Unauthorized'
+      response '404', 'User was not found'
     end
   end
 
@@ -49,19 +43,10 @@ RSpec.describe 'reservations', type: :request do
                                                  }
                                                },
                 required: %w[reservation_date city total_cost user_id room_ids]
-      response '201', 'Reservation was created successfully' do
-        let(:user_id) { '1' }
-        run_test!
-      end
-      response '401', 'Unauthorized' do
-        run_test!
-      end
-      response '404', 'User was not found' do
-        run_test!
-      end
-      response '422', "Reservation couldn't be created successfully." do
-        run_test!
-      end
+      response '201', 'Reservation was created successfully'
+      response '401', 'Unauthorized'
+      response '404', 'User was not found'
+      response '422', "Reservation couldn't be created successfully."
     end
   end
 
@@ -84,16 +69,9 @@ RSpec.describe 'reservations', type: :request do
                  }]
                },
                required: %w[id reservation_date city total_cost user_id created_at updated_at rooms]
-        let(:user_id) { '1' }
-        let(:id) { '1' }
-        run_test!
       end
-      response '401', 'Unauthorized' do
-        run_test!
-      end
-      response '404', 'User or Reservation was not found' do
-        run_test!
-      end
+      response '401', 'Unauthorized'
+      response '404', 'User or Reservation was not found'
     end
   end
 
@@ -104,16 +82,9 @@ RSpec.describe 'reservations', type: :request do
     delete 'Delete reservation' do
       tags 'Reservations'
       security [bearer_auth: []]
-      response '204', 'Success, no content' do
-        let(:user_id) { '1' }
-        run_test!
-      end
-      response '401', 'Unauthorized' do
-        run_test!
-      end
-      response '404', 'User or Reservation was not found' do
-        run_test!
-      end
+      response '204', 'Success, no content'
+      response '401', 'Unauthorized'
+      response '404', 'User or Reservation was not found'
     end
   end
 end

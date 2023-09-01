@@ -22,11 +22,8 @@ RSpec.describe 'rooms', type: :request do
                          },
           required: %w[id name guest beds description photo cost reserved branch]
         }
-        run_test!
       end
-      response '401', 'Unauthorized' do
-        run_test!
-      end
+      response '401', 'Unauthorized'
     end
   end
 
@@ -49,15 +46,9 @@ RSpec.describe 'rooms', type: :request do
                        },
         required: %w[name guest beds description photo cost reserved branch_id]
       }
-      response '201', 'Room was created successfully' do
-        run_test!
-      end
-      response '401', 'Unauthorized' do
-        run_test!
-      end
-      response '422', "Room couldn't be created successfully." do
-        run_test!
-      end
+      response '201', 'Room was created successfully'
+      response '401', 'Unauthorized'
+      response '422', "Room couldn't be created successfully."
     end
   end
 
@@ -74,15 +65,9 @@ RSpec.describe 'rooms', type: :request do
                  photo: 'room.jpg', cost: 100, reserved: false, branch: { id: 1, city: 'New York' }
                },
                required: %w[id name guest beds description photo cost reserved branch]
-        let(:id) { '1' }
-        run_test!
       end
-      response '401', 'Unauthorized' do
-        run_test!
-      end
-      response '404', 'Room was not found' do
-        run_test!
-      end
+      response '401', 'Unauthorized'
+      response '404', 'Room was not found'
     end
   end
 
@@ -91,15 +76,9 @@ RSpec.describe 'rooms', type: :request do
       parameter name: :id, in: :path, type: :string, description: 'id'
       tags 'Rooms'
       security [bearer_auth: []]
-      response '204', 'Success, no content' do
-        run_test!
-      end
-      response '401', 'Unauthorized' do
-        run_test!
-      end
-      response '404', 'Room was not found' do
-        run_test!
-      end
+      response '204', 'Success, no content'
+      response '401', 'Unauthorized'
+      response '404', 'Room was not found'
     end
   end
 end
