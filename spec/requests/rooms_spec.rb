@@ -7,7 +7,6 @@ RSpec.describe 'rooms', type: :request do
       parameter name: :branch_id, in: :query, type: :integer, description: 'branch_id'
       tags 'Rooms'
       produces 'application/json'
-      security [bearer_auth: []]
       response '200', 'Successful, rooms found' do
         schema type: :array, items: {
           type: :object, properties: {

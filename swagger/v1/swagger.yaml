@@ -287,8 +287,6 @@ paths:
           type: integer
       tags:
       - Rooms
-      security:
-      - bearer_auth: []
       responses:
         '200':
           description: Successful, rooms found

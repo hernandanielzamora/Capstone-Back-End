@@ -1,4 +1,5 @@
 class RoomsController < ApplicationController
+  before_action :authenticate_user!, except: [:index]
   def index
     is_reserved = params[:reserved]
     branch_id = params[:branch_id]
