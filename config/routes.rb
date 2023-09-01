@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  mount Rswag::Ui::Engine => '/api-docs'
+  mount Rswag::Ui::Engine => '/'
   mount Rswag::Api::Engine => '/api-docs'
   get '/current_user', to: 'current_user#index'
   devise_for :users, path: '', path_names: {
