@@ -15,7 +15,7 @@ class BranchesController < ApplicationController
       end
     else
       render json: 'Access not allowed !'
-    end 
+    end
   end
 
   def show
