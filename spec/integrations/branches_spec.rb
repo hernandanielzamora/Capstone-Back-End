@@ -1,7 +1,7 @@
 require_relative '../rails_helper'
 
 RSpec.describe BranchesController, type: :request do
-  user_one = User.first || User.new(name: 'User', email: "user@example.com", password: '123456')
+  user_one = User.first || User.new(name: 'User', email: 'user@example.com', password: '123456')
   user_one.save!
   before { sign_in user_one }
   branch_three = Branch.create(city: 'New York')
