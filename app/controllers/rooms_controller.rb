@@ -27,7 +27,7 @@ class RoomsController < ApplicationController
       end
     else
       render json: 'Access not allowed !'
-    end    
+    end
   end
 
   def destroy
@@ -37,7 +37,7 @@ class RoomsController < ApplicationController
       head :no_content
     else
       render json: 'Access not allowed !'
-    end    
+    end
   end
 
   private
