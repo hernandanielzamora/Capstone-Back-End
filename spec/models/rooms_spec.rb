@@ -1,7 +1,7 @@
 require_relative '../rails_helper'
 
 RSpec.describe Room, type: :model do
-  user_one = User.create(name: 'user_one', email: "fredo#{rand(1...100)}@example.com", password: '123456')
+  user_one = User.first || User.new(name: 'User', email: 'user4@example.com', password: '123456')
   user_one.save!
   branch_one = Branch.create(city: 'New York')
   room_one = Room.create(branch: branch_one, name: 'Room One', guest: 2, beds: 1, description: 'This is a room.',

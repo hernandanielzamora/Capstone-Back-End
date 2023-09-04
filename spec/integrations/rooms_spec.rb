@@ -1,8 +1,9 @@
 require_relative '../rails_helper'
 
 RSpec.describe RoomsController, type: :request do
-  user_one = User.new(name: 'Vasquez', email: "vasquez#{rand(1...100)}@example.com", password: '123456')
+  user_one = User.first || User.new(name: 'User', email: 'user2@example.com', password: '123456')
   user_one.save!
+  before { sign_in user_one }
   branch_one = Branch.create(city: 'New York')
   branch_one.save!
   room_one = Room.create(branch: branch_one, name: 'Room One', guest: 2, beds: 1, description: 'This is a room.',

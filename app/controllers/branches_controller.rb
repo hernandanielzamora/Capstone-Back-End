@@ -1,4 +1,5 @@
 class BranchesController < ApplicationController
+  before_action :authenticate_user!
   def index
     branches = Branch.order(:id).all
     render json: branches

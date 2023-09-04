@@ -1,10 +1,22 @@
 require 'rails_helper'
 
-RSpec.describe 'CurrentUsers', type: :request do
-  describe 'GET /index' do
-    it 'returns http success' do
-      get '/current_user/index'
-      expect(response).to have_http_status(:success)
+RSpec.describe 'CurrentUser', type: :request do
+  path '/current_user' do
+    get 'Retrieve the data of the current user' do
+      tags 'Current User'
+      produces 'application/json'
+      security [bearer_auth: []]
+      response '200', 'Success, User found' do
+        schema type: :object,
+               properties: {
+                 id: { type: :integer, example: 1 },
+                 email: { type: :string, example: 'unregistered@email' },
+                 name: { type: :string, example: 'Name' },
+                 role: { type: :string, example: 'user' }
+               },
+               required: %w[id email name role]
+      end
+      response '401', 'Unauthorized'
     end
   end
 end
