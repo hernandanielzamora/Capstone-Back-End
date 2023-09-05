@@ -1,5 +1,4 @@
 require_relative '../rails_helper'
-require 'rspec/json_expectations'
 
 RSpec.describe ReservationsController, type: :request do
   user_one = User.first || User.new(name: 'User', email: 'user1@example.com', password: '123456')
