@@ -25,6 +25,9 @@ RSpec.configure do |config|
           url: '{defaultHost}',
           variables: {
             defaultHost: {
+              default: 'https://rails-b62y.onrender.com'
+            },
+            developmentHost: {
               default: 'http://127.0.0.1:4000'
             }
           }
