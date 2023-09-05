@@ -6,12 +6,13 @@ RSpec.describe BranchesController, type: :request do
   before { sign_in user_one }
 
   if Branch.all.empty?
-    branch_one = Branch.create(city: 'New York')
-    branch_two = Branch.create(city: 'Miami')
+    Branch.create(city: 'New York')
+    Branch.create(city: 'Miami')
   else
-    branch_one = Branch.find(1)
     branch_two = Branch.find(2)
   end
+
+  branch_two = Branch.find(2)
 
   describe 'GET /branches' do
     it 'returns a list of branches' do
