@@ -6,9 +6,10 @@ RSpec.describe RoomsController, type: :request do
   before { sign_in user_one }
   branch_one = Branch.first || Branch.create(city: 'New York')
   branch_one.save!
-  room_one = Room.first || Room.create(branch: branch_one, name: 'Room One', guest: 2, beds: 1, description: 'This is a room.',
-                         photo: 'https://www.ikea.com/mx/en/images/products/malm-bedroom-furniture-set-of-4-black-brown__1102127_pe866548_s5.jpg',
-                         cost: 100, reserved: false)
+  room_one = Room.first || Room.create(branch: branch_one, name: 'Room One', guest: 2,
+                                       beds: 1, description: 'This is a room.',
+                                       photo: 'https://www.ikea.com/mx/en/images/products/malm-bedroom-furniture-set-of-4-black-brown__1102127_pe866548_s5.jpg',
+                                       cost: 100, reserved: false)
   room_one.save!
   room_two = Room.create(branch: branch_one, name: 'Room Two', guest: 3, beds: 1, description: 'This is a room.',
                          photo: 'https://www.ikea.com/mx/en/images/products/malm-bedroom-furniture-set-of-4-black-brown__1102127_pe866548_s5.jpg',
