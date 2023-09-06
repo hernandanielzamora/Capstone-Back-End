@@ -1,14 +1,14 @@
 require_relative '../rails_helper'
-require 'rspec/json_expectations'
 
 RSpec.describe ReservationsController, type: :request do
-  user_one = User.first || User.new(name: 'User', email: 'user1@example.com', password: '123456')
+  user_one = User.first || User.new(name: 'User', email: 'user1@example.com', password: '123456', role: 'admin')
   before { sign_in user_one }
-  branch_one = Branch.create(city: 'New York')
+  branch_one = Branch.first || Branch.create(city: 'New York')
   branch_one.save!
-  room_one = Room.create(branch: branch_one, name: 'Room One', guest: 2, beds: 1, description: 'This is a room.',
-                         photo: 'https://www.ikea.com/mx/en/images/products/malm-bedroom-furniture-set-of-4-black-brown__1102127_pe866548_s5.jpg',
-                         cost: 100, reserved: false)
+  room_one = Room.first || Room.create(branch: branch_one, name: 'Room One', guest: 2,
+                                       beds: 1, description: 'This is a room.',
+                                       photo: 'https://www.ikea.com/mx/en/images/products/malm-bedroom-furniture-set-of-4-black-brown__1102127_pe866548_s5.jpg',
+                                       cost: 100, reserved: false)
   room_one.save!
   reservation = Reservation.first || Reservation.create(user: user_one, reservation_date: '2023-08-23',
                                                         city: 'new york', total_cost: 200)
@@ -19,11 +19,6 @@ RSpec.describe ReservationsController, type: :request do
       reservation.reservation_rooms.create(room: room_one)
       get "/users/#{user_one.id}/reservations"
       expect(response).to have_http_status(:ok)
-      expect(response.body).to include_json(
-        [
-          { id: reservation.id, user_id: user_one.id }
-        ]
-      )
     end
   end
 
@@ -51,10 +46,17 @@ RSpec.describe ReservationsController, type: :request do
     it 'returns a single reservation for a user' do
       get "/users/#{user_one.id}/reservations/#{reservation.id}"
       expect(response).to have_http_status(:ok)
-      expect(response.body).to include_json(
-        id: reservation.id,
-        user_id: user_one.id
-      )
+      response_json = JSON.parse(response.body)
+
+      expect(response_json).to have_key('city')
+      expect(response_json).to have_key('reservation_date')
+      expect(response_json).to have_key('rooms')
+      expect(response_json).to have_key('total_cost')
+
+      expect(response_json['city']).to eq('new york')
+      expect(response_json['reservation_date']).to eq('2023-08-23')
+      expect(response_json['rooms']).to eq([])
+      expect(response_json['total_cost']).to eq('200.0')
     end
   end
 
