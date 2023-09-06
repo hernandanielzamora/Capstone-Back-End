@@ -33,6 +33,28 @@ This project was built using Ruby on Rails. It is the backend of a booking app t
 
 The **Capstone-Back-End** project sends data to the front-end through the use of api-endpoints. These endpoints are mostly private so the users can only read and manipulate the data if they are autheticated and authorized to do so. The project was built using Ruby on Rails and deployed on Render.
 
+## Kanban Board
+
+### Current state
+
+[Kanban Board](https://github.com/users/hernandanielzamora/projects/4/views/1)
+
+### Initial State
+
+![image](https://camo.githubusercontent.com/06ae0b8a6d178a32902c22e9de37ebe10b28d5298f1f3dde4ffa022d785dffde/68747470733a2f2f692e706f7374696d672e63632f6662506a4351594c2f6769746875622d636f6d2d75736572732d6865726e616e64616e69656c7a616d6f72612d70726f6a656374732d342d76696577732d312e706e67)
+
+<br>
+
+### Final Team: 
+
+4 members (all mentioned in the authors section)
+
+### Frontend Repo
+
+Click this [link](https://github.com/hernandanielzamora/Capstone-Front-End/tree/main) to visit the frontend repository.
+
+
+
 ## 🛠 Built With <a name="built-with"></a>
 
 ### Tech Stack <a name="tech-stack"></a>
