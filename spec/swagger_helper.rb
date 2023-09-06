@@ -23,19 +23,16 @@ RSpec.configure do |config|
       servers: [
         {
           url: '{defaultHost}',
-          variables: {
-            defaultHost: {
-              default: 'http://127.0.0.1:4000'
-            }
-          }
+          variables: { defaultHost: { default: 'https://rails-b62y.onrender.com' } }
+        },
+        {
+          url: '{developmentHost}',
+          variables: { developmentHost: { default: 'http://127.0.0.1:4000' } }
         }
       ],
       components: {
         securitySchemes: {
-          bearer_auth: {
-            type: :http,
-            scheme: :Bearer
-          }
+          bearer_auth: { type: :http, scheme: :Bearer }
         }
       }
     }
