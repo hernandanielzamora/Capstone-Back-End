@@ -1,0 +1,556 @@
+---
+openapi: 3.0.1
+info:
+  title: API V1
+  version: v1
+paths:
+  "/branches":
+    get:
+      summary: Retrieve all branches
+      tags:
+      - Branches
+      security:
+      - bearer_auth: []
+      responses:
+        '200':
+          description: Success, branches found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      example: 1
+                    city:
+                      type: string
+                      example: New York
+                  required:
+                  - id
+                  - city
+        '401':
+          description: Unauthorized
+  "/branches/{id}":
+    parameters:
+    - name: id
+      in: path
+      description: id
+      required: true
+      schema:
+        type: string
+    get:
+      summary: Retrieve a branch
+      tags:
+      - Branches
+      security:
+      - bearer_auth: []
+      responses:
+        '200':
+          description: Success, branch was found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 1
+                  city:
+                    type: string
+                    example: New York
+                required:
+                - id
+                - city
+        '401':
+          description: Unauthorized
+        '404':
+          description: Branch was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 404
+                  error:
+                    type: string
+                    example: Not Found
+                  exception:
+                    type: string
+                    example: "#<ActiveRecord::RecordNotFound: Couldn't find Branch
+                      with 'id'=NaN>"
+  "/current_user":
+    get:
+      summary: Retrieve the data of the current user
+      tags:
+      - Current User
+      security:
+      - bearer_auth: []
+      responses:
+        '200':
+          description: Success, User found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 1
+                  email:
+                    type: string
+                    example: unregistered@email
+                  name:
+                    type: string
+                    example: Name
+                  role:
+                    type: string
+                    example: user
+                required:
+                - id
+                - email
+                - name
+                - role
+        '401':
+          description: Unauthorized
+  "/users/{user_id}/reservations":
+    parameters:
+    - name: user_id
+      in: path
+      description: user_id
+      required: true
+      schema:
+        type: string
+    get:
+      summary: Retrieve all reservations
+      tags:
+      - Reservations
+      security:
+      - bearer_auth: []
+      responses:
+        '200':
+          description: Successful, reservations found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  example:
+                    id: 1
+                    reservation_date: '2023-08-23'
+                    city: New York
+                    total_cost: 100
+                    user_id: 1
+                    created_at: '2023-08-20'
+                    updated_at: '2023-08-20'
+                    rooms:
+                    - id: 1
+                      name: Room 1
+                      guest: 2
+                      beds: 1
+                      description: Room 1 description
+                      photo: room.jpg
+                      cost: 100
+                      reserved: true
+                      branch_id: 1
+                required:
+                - id
+                - reservation_date
+                - city
+                - total_cost
+                - user_id
+                - created_at
+                - updated_at
+                - rooms
+        '401':
+          description: Unauthorized
+        '404':
+          description: User was not found
+    post:
+      summary: Create a reservation
+      tags:
+      - Reservations
+      security:
+      - bearer_auth: []
+      parameters: []
+      responses:
+        '201':
+          description: Reservation was created successfully
+        '401':
+          description: Unauthorized
+        '404':
+          description: User was not found
+        '422':
+          description: Reservation couldn't be created successfully.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                reservation:
+                  reservation_date: '2023-08-23'
+                  city: New York
+                  total_cost: 998
+                  user_id: 1
+                  room_ids:
+                  - 3
+        required: true
+  "/users/{user_id}/reservations/{id}":
+    parameters:
+    - name: user_id
+      in: path
+      description: user_id
+      required: true
+      schema:
+        type: string
+    - name: id
+      in: path
+      description: reservation id
+      required: true
+      schema:
+        type: string
+    get:
+      summary: Show reservation details
+      tags:
+      - Reservations
+      security:
+      - bearer_auth: []
+      responses:
+        '200':
+          description: Success, reservation was found
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  id: 1
+                  reservation_date: '2023-08-23'
+                  city: New York
+                  total_cost: 998
+                  user_id: 1
+                  created_at: '2023-08-20'
+                  updated_at: '2023-08-20'
+                  rooms:
+                  - id: 1
+                    name: Room 1
+                    guest: 2
+                    beds: 1
+                    description: Room 1 description
+                    photo: room.jpg
+                    cost: 100
+                    reserved: true
+                    branch_id: 1
+                required:
+                - id
+                - reservation_date
+                - city
+                - total_cost
+                - user_id
+                - created_at
+                - updated_at
+                - rooms
+        '401':
+          description: Unauthorized
+        '404':
+          description: User or Reservation was not found
+    delete:
+      summary: Delete reservation
+      tags:
+      - Reservations
+      security:
+      - bearer_auth: []
+      responses:
+        '204':
+          description: Success, no content
+        '401':
+          description: Unauthorized
+        '404':
+          description: User or Reservation was not found
+  "/rooms":
+    get:
+      summary: Retrieve all rooms
+      parameters:
+      - name: reserved
+        in: query
+        description: reserved
+        schema:
+          type: boolean
+      - name: branch_id
+        in: query
+        description: branch_id
+        schema:
+          type: integer
+      tags:
+      - Rooms
+      responses:
+        '200':
+          description: Successful, rooms found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      example: 1
+                    name:
+                      type: string
+                      example: Room one
+                    guest:
+                      type: integer
+                      example: 2
+                    beds:
+                      type: integer
+                      example: 1
+                    description:
+                      type: string
+                      example: This is a room.
+                    photo:
+                      type: string
+                      example: room.jpg
+                    cost:
+                      type: integer
+                      example: 100
+                    reserved:
+                      type: boolean
+                      example: false
+                    branch:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 1
+                        city:
+                          type: string
+                          example: New York
+                  required:
+                  - id
+                  - name
+                  - guest
+                  - beds
+                  - description
+                  - photo
+                  - cost
+                  - reserved
+                  - branch
+        '401':
+          description: Unauthorized
+    post:
+      summary: Create a room
+      tags:
+      - Rooms
+      security:
+      - bearer_auth: []
+      parameters: []
+      responses:
+        '201':
+          description: Room was created successfully
+        '401':
+          description: Unauthorized
+        '422':
+          description: Room couldn't be created successfully.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                room:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                      example: Room VIP
+                    guest:
+                      type: integer
+                      example: 4
+                    beds:
+                      type: integer
+                      example: 2
+                    description:
+                      type: string
+                      example: Room created from the API docs
+                    photo:
+                      type: string
+                      example: Valid url
+                    cost:
+                      type: integer
+                      example: 1000
+                    reserved:
+                      type: boolean
+                      example: false
+                    branch_id:
+                      type: integer
+                      example: 1
+              required:
+              - name
+              - guest
+              - beds
+              - description
+              - photo
+              - cost
+              - reserved
+              - branch_id
+  "/rooms/{id}":
+    get:
+      summary: Show room details
+      parameters:
+      - name: id
+        in: path
+        description: id
+        required: true
+        schema:
+          type: string
+      tags:
+      - Rooms
+      security:
+      - bearer_auth: []
+      responses:
+        '200':
+          description: Success, room was found
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  id: 1
+                  name: Room one
+                  guest: 2
+                  beds: 1
+                  description: This is a room.
+                  photo: room.jpg
+                  cost: 100
+                  reserved: false
+                  branch:
+                    id: 1
+                    city: New York
+                required:
+                - id
+                - name
+                - guest
+                - beds
+                - description
+                - photo
+                - cost
+                - reserved
+                - branch
+        '401':
+          description: Unauthorized
+        '404':
+          description: Room was not found
+    delete:
+      summary: Delete room
+      parameters:
+      - name: id
+        in: path
+        description: id
+        required: true
+        schema:
+          type: string
+      tags:
+      - Rooms
+      security:
+      - bearer_auth: []
+      responses:
+        '204':
+          description: Success, no content
+        '401':
+          description: Unauthorized
+        '404':
+          description: Room was not found
+  "/sign_up":
+    post:
+      summary: Create registration
+      tags:
+      - Registrations
+      parameters: []
+      responses:
+        '200':
+          description: Signed up sucessfully
+        '422':
+          description: User couldn't be created successfully.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                      example: User
+                    email:
+                      type: string
+                      example: unregistered@email
+                    password:
+                      type: string
+                      example: password
+              required:
+              - name
+              - email
+              - password
+  "/login":
+    post:
+      summary: Create session
+      tags:
+      - Sessions
+      parameters: []
+      responses:
+        '200':
+          description: Logged in sucessfully.
+        '401':
+          description: Invalid Email or password.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user:
+                  type: object
+                  properties:
+                    email:
+                      type: string
+                      example: unregistered@email
+                    password:
+                      type: string
+                      example: password
+              required:
+              - name
+              - email
+              - password
+  "/logout":
+    delete:
+      summary: Delete/Close session
+      tags:
+      - Sessions
+      security:
+      - bearer_auth: []
+      responses:
+        '200':
+          description: Logged out sucessfully.
+        '401':
+          description: Couldn't find an active session.
+servers:
+- url: "{defaultHost}"
+  variables:
+    defaultHost:
+      default: https://rails-b62y.onrender.com
+- url: "{developmentHost}"
+  variables:
+    developmentHost:
+      default: http://127.0.0.1:4000
+components:
+  securitySchemes:
+    bearer_auth:
+      type: http
+      scheme: Bearer
