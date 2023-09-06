@@ -129,7 +129,12 @@ Once you have the project installed, access the project's root directory usign t
   cd Capstone-Back-End
 ```
 
-And lastly, run this command to see the project in in your browser.
+Before running your application you'll want to create a master key. To do so you'll need to remove config/master.key and config/credentials.yml.enc if they exist. Then in your terminal run:
+```sh
+  EDITOR="code --wait" rails credentials:edit 
+```
+
+Close the editor that opens. This command will create a new master.key and credentials.yml.enc if they do not exist. Lastly, run this command to see the project in in your browser.
 
 ```sh
   rails server
